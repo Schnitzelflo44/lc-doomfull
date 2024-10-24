@@ -32,7 +32,6 @@ jobs:
           cache-dependency-path: ./**/packages.lock.json
           global-json-file: global.json
 
-      # Upgrade cache action to v4 for Node.js 20 compatibility
       - name: cache plugins
         uses: actions/cache@v4
         with:
@@ -44,14 +43,24 @@ jobs:
       - name: restore
         run: dotnet restore --locked-mode
 
-      - name: publish
-        run: dotnet publish src/src/LethalCompany.Doom.csproj -c Release -o ${{ github.workspace }}/.package --no-restore
+      # Ensure .csproj file exists
+      - name: check .csproj file
+        run: |
+          if [ ! -f "src/src/LethalCompany.Doom.csproj" ]; then
+            echo "ERROR: .csproj file not found!"
+            exit 1
+          fi
 
-      # Add this step to check the output directory
+      # Run dotnet publish in verbose mode to capture detailed logs
+      - name: publish project
+        run: |
+          echo "Running dotnet publish in verbose mode..."
+          dotnet publish src/src/LethalCompany.Doom.csproj -c Release -o ${{ github.workspace }}/.package --no-restore -v diag
+
+      # List the output directory contents after publish to confirm files are there
       - name: list package directory
         run: ls -al ${{ github.workspace }}/.package
 
-      # Keep upload-artifact action on v4 (latest available)
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
