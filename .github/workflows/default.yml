@@ -1,4 +1,4 @@
-name: default
+name: Build LC-Doom Mod
 
 on:
   push:
@@ -20,34 +20,39 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: true
 
-      - name: setup dotnet
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
+          dotnet-version: 8.0.101
           cache: true
-          cache-dependency-path: ./**/packages.lock.json
+          cache-dependency-path: src/src/packages.lock.json
           global-json-file: global.json
 
-      - name: cache plugins
-        uses: actions/cache@v3
-        with:
-          key: plugin-cache-${{ runner.os }}-${{ hashFiles('**/plugins.lock.json') }}
-          path: ${{ env.PLUGIN_SDK_CACHE }}
-          restore-keys: |
-            plugin-cache-${{ runner.os }}-
+      - name: Restore Dependencies for LethalCompany.Doom
+        run: dotnet restore src/src/LethalCompany.Doom.csproj
 
-      - name: restore
-        run: dotnet restore --locked-mode
+      - name: Build LethalCompany.Doom
+        run: dotnet build src/src/LethalCompany.Doom.csproj -c Release
 
-      - name: publish
+      - name: Publish LethalCompany.Doom
         run: dotnet publish src/src/LethalCompany.Doom.csproj -c Release -o .package --no-restore
 
-      - name: upload artifact
+      - name: Restore Dependencies for ManagedDoom
+        run: dotnet restore src/src/LethalCompany.Doom.ManagedDoom.csproj  # Updated path for ManagedDoom
+
+      - name: Build ManagedDoom
+        run: dotnet build src/src/LethalCompany.Doom.ManagedDoom.csproj -c Release  # Updated path for ManagedDoom
+
+      - name: Publish ManagedDoom
+        run: dotnet publish src/src/LethalCompany.Doom.ManagedDoom.csproj -c Release -o .package --no-restore  # Updated path for ManagedDoom
+
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: lc-doom
-          path: .package
+          path: .package/**  # Upload all files from the .package directory
