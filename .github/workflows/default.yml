@@ -51,9 +51,9 @@ jobs:
       - name: list package directory
         run: ls -al ${{ github.workspace }}/.package
 
-      # Upgrade upload-artifact action to v5 for Node.js 20 compatibility
+      # Keep upload-artifact action on v4 (latest available)
       - name: upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: lc-doom
           path: ${{ github.workspace }}/.package
