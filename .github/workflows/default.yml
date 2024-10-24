@@ -1,4 +1,4 @@
-name: default
+name: Build LC-Doom Mod
 
 on:
   push:
@@ -20,38 +20,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: true
 
-      - name: setup dotnet
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.101  # Specify the exact .NET version
+          dotnet-version: 8.0.101
           cache: true
-          cache-dependency-path: ./**/packages.lock.json
           global-json-file: global.json
 
-      - name: cache plugins
-        uses: actions/cache@v3
-        with:
-          key: plugin-cache-${{ runner.os }}-${{ hashFiles('**/plugins.lock.json') }}
-          path: ${{ env.PLUGIN_SDK_CACHE }}
-          restore-keys: |
-            plugin-cache-${{ runner.os }}-
+      - name: Restore Dependencies
+        run: dotnet restore src/src/LethalCompany.Doom.csproj
 
-      - name: restore
-        run: dotnet restore --locked-mode
+      - name: Build Mod
+        run: dotnet build src/src/LethalCompany.Doom.csproj -c Release
 
-      - name: publish
+      - name: Publish Mod
         run: dotnet publish src/src/LethalCompany.Doom.csproj -c Release --no-restore
 
-      - name: List output directory
-        run: ls -la bin/Release/netstandard2.1  # List the output files
-
-      - name: upload artifact
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: lc-doom
-          path: bin/Release/netstandard2.1/**  # Upload all files from the output directory
+          path: '**/*.dll'  # Adjust this to include any specific output files you want
