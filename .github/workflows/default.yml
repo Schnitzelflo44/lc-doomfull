@@ -30,16 +30,26 @@ jobs:
         with:
           dotnet-version: 8.0.101
           cache: true
+          cache-dependency-path: src/src/packages.lock.json  # Use for LethalCompany.Doom
           global-json-file: global.json
 
-      - name: Restore Dependencies
+      - name: Restore Dependencies for LethalCompany.Doom
         run: dotnet restore src/src/LethalCompany.Doom.csproj
 
-      - name: Build Mod
+      - name: Build LethalCompany.Doom
         run: dotnet build src/src/LethalCompany.Doom.csproj -c Release
 
-      - name: Publish Mod
+      - name: Publish LethalCompany.Doom
         run: dotnet publish src/src/LethalCompany.Doom.csproj -c Release --no-restore
+
+      - name: Restore Dependencies for ManagedDoom
+        run: dotnet restore src/ManagedDoom/ManagedDoom.csproj
+
+      - name: Build ManagedDoom
+        run: dotnet build src/ManagedDoom/ManagedDoom.csproj -c Release
+
+      - name: Publish ManagedDoom
+        run: dotnet publish src/ManagedDoom/ManagedDoom.csproj -c Release --no-restore
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
