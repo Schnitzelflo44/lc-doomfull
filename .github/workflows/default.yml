@@ -43,13 +43,13 @@ jobs:
         run: dotnet publish src/src/LethalCompany.Doom.csproj -c Release -o .package --no-restore
 
       - name: Restore Dependencies for ManagedDoom
-        run: dotnet restore src/src/LethalCompany.Doom.ManagedDoom.csproj  # Updated path for ManagedDoom
+        run: dotnet restore src/ManagedDoom/LethalCompany.Doom.ManagedDoom.csproj  # Updated path for ManagedDoom
 
       - name: Build ManagedDoom
-        run: dotnet build src/src/LethalCompany.Doom.ManagedDoom.csproj -c Release  # Updated path for ManagedDoom
+        run: dotnet build src/ManagedDoom/LethalCompany.Doom.ManagedDoom.csproj -c Release  # Updated path for ManagedDoom
 
       - name: Publish ManagedDoom
-        run: dotnet publish src/src/LethalCompany.Doom.ManagedDoom.csproj -c Release -o .package --no-restore  # Updated path for ManagedDoom
+        run: dotnet publish src/ManagedDoom/LethalCompany.Doom.ManagedDoom.csproj -c Release -o .package --no-restore  # Updated path for ManagedDoom
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
