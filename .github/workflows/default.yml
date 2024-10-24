@@ -32,8 +32,9 @@ jobs:
           cache-dependency-path: ./**/packages.lock.json
           global-json-file: global.json
 
+      # Upgrade cache action to v4 for Node.js 20 compatibility
       - name: cache plugins
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: plugin-cache-${{ runner.os }}-${{ hashFiles('**/plugins.lock.json') }}
           path: ${{ env.PLUGIN_SDK_CACHE }}
@@ -50,8 +51,5 @@ jobs:
       - name: list package directory
         run: ls -al ${{ github.workspace }}/.package
 
+      # Upgrade upload-artifact action to v5 for Node.js 20 compatibility
       - name: upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: lc-doom
-          path: ${{ github.workspace }}/.package
