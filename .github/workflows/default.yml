@@ -53,3 +53,7 @@ jobs:
 
       # Upgrade upload-artifact action to v5 for Node.js 20 compatibility
       - name: upload artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: lc-doom
+          path: ${{ github.workspace }}/.package
