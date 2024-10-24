@@ -44,10 +44,14 @@ jobs:
         run: dotnet restore --locked-mode
 
       - name: publish
-        run: dotnet publish src/src/LethalCompany.Doom.csproj -c Release -o .package --no-restore
+        run: dotnet publish src/src/LethalCompany.Doom.csproj -c Release -o ${{ github.workspace }}/.package --no-restore
+
+      # Add this step to check the output directory
+      - name: list package directory
+        run: ls -al ${{ github.workspace }}/.package
 
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: lc-doom
-          path: .package
+          path: ${{ github.workspace }}/.package
