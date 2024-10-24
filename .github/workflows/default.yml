@@ -1,4 +1,4 @@
-name: Build LC-Doom Mod
+name: default
 
 on:
   push:
@@ -20,39 +20,34 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: checkout
         uses: actions/checkout@v4
         with:
           submodules: true
 
-      - name: Setup .NET
+      - name: setup dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.101
           cache: true
-          cache-dependency-path: src/src/packages.lock.json
+          cache-dependency-path: ./**/packages.lock.json
           global-json-file: global.json
 
-      - name: Restore Dependencies for LethalCompany.Doom
-        run: dotnet restore src/src/LethalCompany.Doom.csproj
+      - name: cache plugins
+        uses: actions/cache@v3
+        with:
+          key: plugin-cache-${{ runner.os }}-${{ hashFiles('**/plugins.lock.json') }}
+          path: ${{ env.PLUGIN_SDK_CACHE }}
+          restore-keys: |
+            plugin-cache-${{ runner.os }}-
 
-      - name: Build LethalCompany.Doom
-        run: dotnet build src/src/LethalCompany.Doom.csproj -c Release
+      - name: restore
+        run: dotnet restore --locked-mode
 
-      - name: Publish LethalCompany.Doom
+      - name: publish
         run: dotnet publish src/src/LethalCompany.Doom.csproj -c Release -o .package --no-restore
 
-      - name: Restore Dependencies for ManagedDoom
-        run: dotnet restore src/ManagedDoom/LethalCompany.Doom.ManagedDoom.csproj  # Updated path for ManagedDoom
-
-      - name: Build ManagedDoom
-        run: dotnet build src/ManagedDoom/LethalCompany.Doom.ManagedDoom.csproj -c Release  # Updated path for ManagedDoom
-
-      - name: Publish ManagedDoom
-        run: dotnet publish src/ManagedDoom/LethalCompany.Doom.ManagedDoom.csproj -c Release -o .package --no-restore  # Updated path for ManagedDoom
-
-      - name: Upload Artifacts
+      - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: lc-doom
-          path: .package/**  # Upload all files from the .package directory
+          path: .package
