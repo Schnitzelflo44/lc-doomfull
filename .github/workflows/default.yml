@@ -28,6 +28,7 @@ jobs:
       - name: setup dotnet
         uses: actions/setup-dotnet@v4
         with:
+          dotnet-version: 8.0.101  # Specify the exact .NET version
           cache: true
           cache-dependency-path: ./**/packages.lock.json
           global-json-file: global.json
@@ -46,8 +47,11 @@ jobs:
       - name: publish
         run: dotnet publish src/src/LethalCompany.Doom.csproj -c Release --no-restore
 
+      - name: List output directory
+        run: ls -la bin/Release/netstandard2.1  # List the output files
+
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: lc-doom
-          path: .package
+          path: bin/Release/netstandard2.1/**  # Upload all files from the output directory
