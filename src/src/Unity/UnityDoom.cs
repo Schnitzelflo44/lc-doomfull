@@ -218,7 +218,7 @@ public sealed class DoomConfigBinder(ConfigFile file, (int width, int height) si
         var location = Path.GetDirectoryName(
             typeof(DoomPlugin).Assembly.Location);
 
-        return Path.Combine(location, "DOOM1.WAD");
+        return Path.Combine(location, "DOOM.WAD");
     }
 
     public void Save(Config config)
